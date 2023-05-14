@@ -1,8 +1,8 @@
-import { button } from "@/utils/styles";
+import { buttonStyle } from "@/utils/styles";
 
 const Button = () => {
   return (
-    <button className={button} type="submit">
+    <button className={buttonStyle} type="submit">
       Submit
     </button>
   );
