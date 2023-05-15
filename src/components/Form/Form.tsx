@@ -5,8 +5,8 @@ import { formStyle } from "@/utils/styles";
 import { getFields, API_URL } from "@/utils/helpers";
 import { Values } from "@/utils/types";
 import InputField from "../Input/Input";
-import Title from "../Title/Title";
 import { FormApi } from "final-form";
+import Title from "../Title/Title";
 
 const DishForm = () => {
   const [selectedElement, setSelectedElement] = useState<number | null>(null);

@@ -13,3 +13,5 @@ export const inputStyle = "focus:outline-none text-xs";
 export const labelStyle = "bg-white absolute -top-3 px-2";
 
 export const errorStyle = "bg-white  text-xs text-red-500 mt-3 mb-5 px-1";
+
+export const titleStyle = "mb-6 text-lg font-bold";
