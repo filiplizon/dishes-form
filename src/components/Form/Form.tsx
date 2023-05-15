@@ -1,14 +1,17 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Form, FormRenderProps } from "react-final-form";
 import Button from "../Button/Button";
-import Input from "../Input/Input";
 import { formStyle } from "@/utils/styles";
-import { getFields } from "@/utils/helpers";
+import { getFields, API_URL } from "@/utils/helpers";
 import { Values } from "@/utils/types";
+import InputField from "../Input/Input";
+import Title from "../Title/Title";
+import { FormApi } from "final-form";
 
 const DishForm = () => {
   const [selectedElement, setSelectedElement] = useState<number | null>(null);
-  const [spiciness, setSpiciness] = useState<string>("0");
+  const [spiciness, setSpiciness] = useState<string>("1");
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   const handleFocusChange = useCallback((index: number | null) => {
     setSelectedElement(index);
@@ -21,40 +24,46 @@ const DishForm = () => {
     []
   );
 
-  const onSubmit = async (values: Values, form: any) => {
-    const response = await fetch(
-      "https://umzzcc503l.execute-api.us-west-2.amazonaws.com/dishes/",
-      {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+  const onSubmit = async (values: Values, form: FormApi<Values>) => {
+    if (values.type !== "soup") {
+      delete values.spiciness_scale;
+    }
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify(values),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     const data = await response.json();
-    console.log(data);
-    form.restart();
+    if (response.ok) {
+      alert(`Response from server: ${JSON.stringify(data, null, 2)}`);
+      form.restart();
+      setErrors({});
+      setSpiciness("1");
+    } else {
+      setErrors(data);
+    }
   };
 
   return (
     <Form onSubmit={onSubmit}>
       {({ handleSubmit, values }: FormRenderProps<Values>) => (
         <form className={formStyle} onSubmit={handleSubmit}>
+          <Title />
           {getFields(values.type, spiciness).map(field => (
-            <Input
+            <InputField
               key={field.name}
               index={field.index}
               selectedElement={selectedElement}
               label={field.label}
-              name={field.name}
+              name={field.name || ""}
               className={field.className}
               component={field.component}
               type={field.type}
-              validate={field.validate}
               options={field.options}
               step={field.step}
-              onFocus={() => handleFocusChange(field.index)}
+              onFocus={() => handleFocusChange(field.index ?? null)}
               onBlur={() => handleFocusChange(null)}
               placeholder={field.placeholder}
               min={field.min}
@@ -62,6 +71,8 @@ const DishForm = () => {
               defaultValue={field.defaultValue}
               value={field.value}
               onMouseUp={handleSpicinessChange}
+              onTouchEnd={handleSpicinessChange}
+              errors={errors}
             />
           ))}
           <Button />

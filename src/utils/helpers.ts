@@ -1,10 +1,19 @@
+import { DishType } from "./enums";
 import { inputStyle } from "./styles";
+import { Input } from "./types";
 
-const required = (value: string | undefined): string | undefined =>
-  value ? undefined : "This field is required";
+export const API_URL =
+  "https://umzzcc503l.execute-api.us-west-2.amazonaws.com/dishes/";
+
+const dishTypeOptions = [
+  { value: "", label: "Select a type..." },
+  { value: DishType.Pizza, label: "Pizza" },
+  { value: DishType.Soup, label: "Soup" },
+  { value: DishType.Sandwich, label: "Sandwich" },
+];
 
 export const getFields = (selectedType: string, spiciness: string) => {
-  const commonFields = [
+  const commonFields: Partial<Input>[] = [
     {
       index: 0,
       name: "name",
@@ -12,9 +21,7 @@ export const getFields = (selectedType: string, spiciness: string) => {
       className: inputStyle,
       component: "input",
       type: "text",
-      validate: required,
       placeholder: "Enter dish name",
-      step: undefined,
     },
     {
       index: 1,
@@ -23,7 +30,6 @@ export const getFields = (selectedType: string, spiciness: string) => {
       className: inputStyle,
       component: "input",
       type: "text",
-      validate: required,
       placeholder: "Enter preparation time (HH:MM:SS)",
     },
     {
@@ -32,17 +38,7 @@ export const getFields = (selectedType: string, spiciness: string) => {
       label: "Dish type:",
       className: inputStyle,
       component: "select",
-      validate: required,
-      value: undefined,
-      options: [
-        { value: "", label: "Select a type..." },
-        { value: "pizza", label: "Pizza" },
-        { value: "soup", label: "Soup" },
-        { value: "sandwich", label: "Sandwich" },
-      ],
-      min: undefined,
-      max: undefined,
-      defaultValue: undefined,
+      options: dishTypeOptions,
     },
   ];
 
@@ -57,11 +53,8 @@ export const getFields = (selectedType: string, spiciness: string) => {
           className: inputStyle,
           component: "input",
           type: "number",
-          validate: required,
           min: "0",
           placeholder: "Enter the number of slices",
-          options: undefined,
-          defaultValue: undefined,
         },
         {
           index: 4,
@@ -70,12 +63,9 @@ export const getFields = (selectedType: string, spiciness: string) => {
           className: inputStyle,
           component: "input",
           type: "number",
-          validate: required,
           min: "0",
           step: "0.01",
-          max: undefined,
           placeholder: "Enter the diameter",
-          value: undefined,
         },
       ];
     case "soup":
@@ -88,14 +78,10 @@ export const getFields = (selectedType: string, spiciness: string) => {
           className: `${inputStyle} accent-gray-800`,
           component: "input",
           type: "range",
-          validate: required,
-          min: "0",
+          min: "1",
           max: "10",
           defaultValue: spiciness,
           value: spiciness,
-          placeholder: undefined,
-          options: undefined,
-          step: undefined,
         },
       ];
     case "sandwich":
@@ -108,17 +94,20 @@ export const getFields = (selectedType: string, spiciness: string) => {
           className: inputStyle,
           component: "input",
           type: "number",
-          validate: required,
           min: "0",
-          max: undefined,
           placeholder: "Enter the number of slices",
-          value: undefined,
-          options: undefined,
-          defaultValue: undefined,
-          step: undefined,
         },
       ];
     default:
       return commonFields;
   }
+};
+
+export const formatErrorMessage = (errorMessage: string) => {
+  const formattedMessage =
+    errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1);
+
+  return formattedMessage.endsWith(".")
+    ? formattedMessage
+    : formattedMessage + ".";
 };

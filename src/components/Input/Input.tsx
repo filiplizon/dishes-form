@@ -1,61 +1,43 @@
-import { inputWrapperStyle, labelStyle } from "@/utils/styles";
+import { formatErrorMessage } from "@/utils/helpers";
+import { errorStyle, inputWrapperStyle, labelStyle } from "@/utils/styles";
 import { Input } from "@/utils/types";
 import { Field } from "react-final-form";
 
-const Input = ({
+const InputField = ({
   index,
   selectedElement,
-  label,
-  name,
-  className,
-  component,
-  type,
-  validate,
-  min,
-  max,
-  placeholder,
-  onFocus,
-  onBlur,
-  onMouseUp,
-  defaultValue,
-  value,
-  options,
-  step,
+  errors,
+  ...inputProps
 }: Input) => {
+  const { label, value, name, options } = inputProps;
+  const errorMessages = errors[name] || [];
+  const hasError = errorMessages.length > 0;
+
+  const wrapperStyle = `${inputWrapperStyle} ${
+    index === selectedElement ? "border-gray-800" : "border-gray"
+  } ${hasError ? "border-red-500 mb-0" : ""}`;
+
   return (
-    <div
-      className={`${inputWrapperStyle} ${
-        index === selectedElement ? "border-gray-800" : "border-gray"
-      }`}
-    >
-      <label className={labelStyle} htmlFor={name}>
-        {type === "range" ? `${label} ${value}` : label}
-      </label>
-      <Field
-        className={className}
-        name={name}
-        component={component}
-        type={type}
-        validate={validate}
-        min={min}
-        max={max}
-        placeholder={placeholder}
-        value={value}
-        defaultValue={defaultValue}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onMouseUp={onMouseUp}
-        onTouchEnd={onMouseUp}
-        step={step}
-      >
-        {options?.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </Field>
-    </div>
+    <>
+      <div className={wrapperStyle}>
+        <label className={labelStyle} htmlFor={name}>
+          {inputProps.type === "range" ? `${label} ${value}` : label}
+        </label>
+        <Field className={inputProps.className} {...inputProps}>
+          {options?.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </Field>
+      </div>
+      {errorMessages.map((errorMessage, index) => (
+        <p key={index} className={errorStyle}>
+          {formatErrorMessage(errorMessage)}
+        </p>
+      ))}
+    </>
   );
 };
 
-export default Input;
+export default InputField;

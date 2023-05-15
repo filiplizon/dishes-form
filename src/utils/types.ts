@@ -9,22 +9,23 @@ export type Values = {
 };
 
 export type Input = {
-  index: number;
+  index?: number;
   selectedElement: number | null;
-  label: string;
+  label?: string;
   name: string;
-  className: string;
+  className?: string;
   component: any;
   type?: string;
-  validate: (value: any) => any;
   min?: string;
   max?: string;
   placeholder?: string;
   onFocus: () => void;
   onBlur: () => void;
   onMouseUp?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onTouchEnd?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   defaultValue?: string;
   value?: string;
   options?: Array<{ value: string; label: string }>;
   step?: string;
+  errors: Record<string, string[]>;
 };
