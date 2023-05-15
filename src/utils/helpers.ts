@@ -29,8 +29,8 @@ export const getFields = (selectedType: string, spiciness: string) => {
       label: "Preparation time:",
       className: inputStyle,
       component: "input",
-      type: "text",
-      placeholder: "Enter preparation time (HH:MM:SS)",
+      type: "time",
+      step: "1",
     },
     {
       index: 2,
